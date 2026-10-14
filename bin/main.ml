@@ -22,11 +22,7 @@ let register_currencies specs =
   List.iter specs ~f:(fun spec ->
     match String.lsplit2 spec ~on:':' with
     | Some (code, digits) ->
-      Money.Currency.register
-        ~code
-        ~exponent:(Int.of_string digits)
-        ~kind:Crypto
-        ()
+      Money.Currency.register ~code ~exponent:(Int.of_string digits) ~kind:Crypto ()
       |> Or_error.ignore_m
       |> or_exit
     | None -> or_exit (Or_error.error_s [%message "-currency expects CODE:DIGITS" spec]))
@@ -74,7 +70,9 @@ let evaluate =
          "-now"
          (optional string)
          ~doc:"TIME evaluation time, ISO 8601 with offset (default: the snapshot's time)"
-     and evidence = flag "-evidence" no_arg ~doc:" also print the evidence of every hit" in
+     and evidence =
+       flag "-evidence" no_arg ~doc:" also print the evidence of every hit"
+     in
      fun () ->
        register_currencies currencies;
        let rules = load rules_path [%of_sexp: Rule.t list] in
@@ -107,6 +105,7 @@ let reason_codes =
 let () =
   Command_unix.run
     (Command.group
-       ~summary:"Treasury policy rules: check rule files and evaluate them against snapshots"
+       ~summary:
+         "Treasury policy rules: check rule files and evaluate them against snapshots"
        [ "check", check; "evaluate", evaluate; "reason-codes", reason_codes ])
 ;;
