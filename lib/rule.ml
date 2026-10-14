@@ -223,7 +223,7 @@ type t = Repr.t =
   }
 [@@deriving sexp_of, compare, equal]
 
-let error what fields = Or_error.error_s [%message what (fields : Sexp.t)]
+let error what fields = Or_error.error_s (Sexp.List [ Sexp.Atom what; fields ])
 let check cond what fields = if cond then Ok () else error what fields
 
 let same_currency what amounts =
