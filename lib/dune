@@ -1,0 +1,6 @@
+(library
+ (name treasury_rules)
+ (public_name treasury-rules)
+ (libraries core zarith money risk-rules)
+ (preprocess
+  (pps ppx_jane)))
