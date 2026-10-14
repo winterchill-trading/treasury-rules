@@ -353,16 +353,16 @@ let validate_guards ({ daily_cap; approval_above; drawdown } : Guards.t) =
 ;;
 
 let validate t =
-  let open Or_error.Let_syntax in
-  let%bind () =
-    check
-      (String.length t.name >= 1 && String.length t.name <= 80)
-      "rule name must have 1 to 80 characters"
-      [%sexp (t.name : string)]
-  in
-  let%bind () = check (t.revision >= 1) "revision below 1" [%sexp (t.revision : int)] in
-  let%bind () = validate_kind t.kind in
-  validate_guards t.guards
+  (let open Or_error.Let_syntax in
+   let%bind () =
+     check
+       (String.length t.name >= 1 && String.length t.name <= 80)
+       "rule name must have 1 to 80 characters"
+       [%sexp (t.name : string)]
+   in
+   let%bind () = check (t.revision >= 1) "revision below 1" [%sexp (t.revision : int)] in
+   let%bind () = validate_kind t.kind in
+   validate_guards t.guards)
   |> Or_error.tag_s ~tag:[%message "invalid rule" ~id:(t.id : Rule_id.t)]
 ;;
 
