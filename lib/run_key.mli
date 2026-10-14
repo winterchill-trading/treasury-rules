@@ -12,6 +12,7 @@ type t =
 include Comparable.S with type t := t
 include Hashable.S with type t := t
 
+(** The key of the period containing [now]. *)
 val create : Rule_id.t -> Cadence.t -> now:Time_ns.t -> t
 
 (** ["sweep-eur:2026-10-14T00:00:00Z"], usable as an idempotency key. *)

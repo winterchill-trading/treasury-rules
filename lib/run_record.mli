@@ -76,7 +76,11 @@ val take_over : t -> now:Time_ns.t -> t Or_error.t
     Fails unless [Evaluating], or when the outcome is for another rule. *)
 val record : t -> Outcome.t -> now:Time_ns.t -> t Or_error.t
 
+(** [Awaiting_approval] to [Awaiting_execution]. Who may approve (roles, a second
+    approver) is the service's policy. *)
 val approve : t -> now:Time_ns.t -> t Or_error.t
+
+(** [Awaiting_approval] to [Rejected], keeping [note]. *)
 val reject : t -> note:string -> now:Time_ns.t -> t Or_error.t
 
 (** The executor finished every action. *)

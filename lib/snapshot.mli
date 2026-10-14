@@ -24,6 +24,7 @@ type t =
   }
 [@@deriving sexp, compare, equal]
 
+(** Lists default to empty. *)
 val create
   :  at:Time_ns.t
   -> ?balances:Balance.t list

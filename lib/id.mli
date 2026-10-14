@@ -26,7 +26,12 @@ end
 (** [Make (Spec)] builds an id kind. [forbidden] lists characters refused on top of
     whitespace; [what] names the kind in error messages. *)
 module Make (_ : sig
+    (** The module path used by [Identifiable], e.g. ["Treasury_rules.Rule_id"]. *)
     val module_name : string
+
+    (** Names the kind in error messages, e.g. ["rule id"]. *)
     val what : string
+
+    (** Characters refused on top of whitespace. *)
     val forbidden : char list
   end) : S

@@ -14,8 +14,13 @@ type t =
   }
 [@@deriving sexp, compare, equal]
 
+(** [action code detail evidence] explains a proposed action (severity [Allow]). *)
 val action : Reason_code.t -> string -> (string * string) list -> t
+
+(** A finding that sends the run to approval (severity [Review]). *)
 val review : Reason_code.t -> string -> (string * string) list -> t
+
+(** A finding that makes the run propose nothing (severity [Block]). *)
 val block : Reason_code.t -> string -> (string * string) list -> t
 
 (** The same finding as a risk-rules hit for [rule] (typology [Limits], or [Operational]

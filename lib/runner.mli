@@ -71,6 +71,7 @@ module Make (M : Monad.S) (Store : Store.S with type 'a io := 'a M.t) : sig
     -> Rule.t
     -> Outcome.t M.t
 
+  (** {!Run_record.approve} with compare-and-set and a [Run_approved] audit entry. *)
   val approve
     :  Store.t
     -> actor:Audit.Actor.t
@@ -78,6 +79,7 @@ module Make (M : Monad.S) (Store : Store.S with type 'a io := 'a M.t) : sig
     -> Run_key.t
     -> Run_record.t Or_error.t M.t
 
+  (** {!Run_record.reject}, audited as [Run_rejected]. *)
   val reject
     :  Store.t
     -> actor:Audit.Actor.t
@@ -86,6 +88,7 @@ module Make (M : Monad.S) (Store : Store.S with type 'a io := 'a M.t) : sig
     -> Run_key.t
     -> Run_record.t Or_error.t M.t
 
+  (** {!Run_record.executed}, audited as [Run_executed]. *)
   val executed
     :  Store.t
     -> actor:Audit.Actor.t
@@ -93,6 +96,7 @@ module Make (M : Monad.S) (Store : Store.S with type 'a io := 'a M.t) : sig
     -> Run_key.t
     -> Run_record.t Or_error.t M.t
 
+  (** {!Run_record.fail}, audited as [Run_failed]. *)
   val failed
     :  Store.t
     -> actor:Audit.Actor.t

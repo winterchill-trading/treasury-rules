@@ -10,9 +10,16 @@ type t [@@deriving sexp, compare, equal, hash]
 (** Fails on a span shorter than one minute or longer than 31 days. *)
 val create : Time_ns.Span.t -> t Or_error.t
 
+(** Raises on what {!create} rejects. *)
 val create_exn : Time_ns.Span.t -> t
+
+(** One period per UTC clock hour. *)
 val hourly : t
+
+(** One period per UTC day. *)
 val daily : t
+
+(** The length of a period. *)
 val span : t -> Time_ns.Span.t
 
 (** The start of the period containing [now]. *)

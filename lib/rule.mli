@@ -98,6 +98,7 @@ module Guards : sig
     }
   [@@deriving sexp, compare, equal]
 
+  (** No cap, no approval threshold, no drawdown pause. *)
   val none : t
 end
 

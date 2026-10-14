@@ -24,6 +24,7 @@ module type S = sig
   type 'a io
   type t
 
+  (** The stored rule with this id, whatever its status. *)
   val find_rule : t -> Rule_id.t -> Rule.t option io
 
   (** Every rule, archived ones included, by id. *)
@@ -55,6 +56,7 @@ module type S = sig
     -> Run_record.t
     -> [ `Updated | `Conflict of Run_record.t option ] io
 
+  (** The record of one run. *)
   val find_run : t -> Run_key.t -> Run_record.t option io
 
   (** Runs whose period starts at or after [since], plus every pending run
@@ -64,6 +66,7 @@ module type S = sig
   (** The rule's runs, newest period first, at most [limit]. *)
   val runs_of_rule : t -> Rule_id.t -> limit:int -> Run_record.t list io
 
+  (** Appends; entries are never changed or removed. *)
   val append_audit : t -> Audit.t -> unit io
 
   (** In append order; only [rule]'s entries when given. *)

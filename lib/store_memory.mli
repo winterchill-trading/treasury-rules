@@ -4,4 +4,5 @@
 open! Core
 include Store.S with type 'a io = 'a
 
+(** An empty store. *)
 val create : unit -> t
