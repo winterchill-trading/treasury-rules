@@ -10,6 +10,7 @@ type t =
 [@@deriving sexp, compare, equal, hash]
 
 include Comparable.S with type t := t
+include Hashable.S with type t := t
 
 val create : Rule_id.t -> Cadence.t -> now:Time_ns.t -> t
 

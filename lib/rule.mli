@@ -102,7 +102,17 @@ module Guards : sig
 end
 
 module Status : sig
-  type t =
+  module Stable : sig
+    module V1 : sig
+      type t =
+        | Active
+        | Paused
+        | Archived
+      [@@deriving bin_io, sexp, compare, equal]
+    end
+  end
+
+  type t = Stable.V1.t =
     | Active
     | Paused
     | Archived

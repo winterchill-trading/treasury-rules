@@ -19,7 +19,22 @@
 open! Core
 
 module Status : sig
-  type t =
+  module Stable : sig
+    module V1 : sig
+      type t =
+        | Evaluating
+        | Skipped
+        | Shadowed
+        | Awaiting_approval
+        | Awaiting_execution
+        | Executed
+        | Failed
+        | Rejected
+      [@@deriving bin_io, sexp, compare, equal]
+    end
+  end
+
+  type t = Stable.V1.t =
     | Evaluating
     | Skipped (** nothing to do; the outcome's hits say why *)
     | Shadowed (** a shadow-mode run; its actions are only recorded *)

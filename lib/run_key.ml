@@ -33,3 +33,4 @@ let to_string { rule; period_start } =
 let action_key t ~index = to_string t ^ ":" ^ Int.to_string index
 
 include Comparable.Make (T)
+include Hashable.Make (T)
