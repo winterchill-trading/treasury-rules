@@ -1,0 +1,7 @@
+(executable
+ (name main)
+ (public_name treasury-rules)
+ (package treasury-rules-cli)
+ (libraries treasury-rules money core core_unix.command_unix)
+ (preprocess
+  (pps ppx_jane)))
