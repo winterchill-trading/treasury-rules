@@ -6,3 +6,9 @@
    (:standard -source-tree-root .)))
  (preprocess
   (pps ppx_jane)))
+
+(cram
+ (package treasury-rules-cli)
+ (deps
+  %{bin:treasury-rules}
+  (glob_files %{project_root}/examples/*.sexp)))
