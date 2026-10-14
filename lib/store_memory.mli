@@ -2,7 +2,6 @@
     processes; every operation is atomic because nothing yields inside it. *)
 
 open! Core
-
 include Store.S with type 'a io = 'a
 
 val create : unit -> t

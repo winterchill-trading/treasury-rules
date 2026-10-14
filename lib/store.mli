@@ -1,12 +1,12 @@
-(** Where rules, run records and the audit trail live. Libraries never persist: a
-    service implements this signature over its database, and {!Store_memory} serves
-    tests, previews and offline modes. {!Store_conformance} checks an implementation.
+(** Where rules, run records and the audit trail live. Libraries never persist: a service
+    implements this signature over its database, and {!Store_memory} serves tests,
+    previews and offline modes. {!Store_conformance} checks an implementation.
 
     Exactly-once rests on {!S.claim_run}: it must be atomic per run key (an insert that
     fails on a duplicate key, or a compare-and-set on the record's version), so of two
     runners racing for one rule and period only one gets [Claimed]. Every later change
-    goes through {!S.update_run}, a compare-and-set on [version]; the loser of a race
-    gets [`Conflict] with the current record and must not act on its own copy. *)
+    goes through {!S.update_run}, a compare-and-set on [version]; the loser of a race gets
+    [`Conflict] with the current record and must not act on its own copy. *)
 
 open! Core
 
@@ -29,9 +29,8 @@ module type S = sig
   (** Every rule, archived ones included, by id. *)
   val rules : t -> Rule.t list io
 
-  (** Inserts when [expected_revision] is [None] and no rule has the id; replaces when
-      the stored rule has [expected_revision]. Otherwise [`Conflict] with what is
-      stored. *)
+  (** Inserts when [expected_revision] is [None] and no rule has the id; replaces when the
+      stored rule has [expected_revision]. Otherwise [`Conflict] with what is stored. *)
   val save_rule
     :  t
     -> expected_revision:int option
@@ -49,8 +48,7 @@ module type S = sig
     -> stale_after:Time_ns.Span.t
     -> Claim.t io
 
-  (** Replaces the record with the same key when its stored version is
-      [expected_version]. *)
+  (** Replaces the record with the same key when its stored version is [expected_version]. *)
   val update_run
     :  t
     -> expected_version:int

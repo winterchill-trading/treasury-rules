@@ -32,9 +32,14 @@ module Make (M : Monad.S) (Store : Store.S with type 'a io := 'a M.t) = struct
        | Error _ as e -> return e
        | Ok (after : Rule.t) ->
          if not (Rule_id.equal after.id id)
-         then return (Or_error.error_s [%message "a change cannot rename a rule" (id : Rule_id.t)])
+         then
+           return
+             (Or_error.error_s
+                [%message "a change cannot rename a rule" (id : Rule_id.t)])
          else (
-           match%bind Store.save_rule store ~expected_revision:(Some before.revision) after with
+           match%bind
+             Store.save_rule store ~expected_revision:(Some before.revision) after
+           with
            | `Conflict _ ->
              return
                (Or_error.error_s
@@ -123,7 +128,8 @@ module Make (M : Monad.S) (Store : Store.S with type 'a io := 'a M.t) = struct
   let transition store ~actor ~now key ~f ~event =
     match%bind Store.find_run store key with
     | None ->
-      return (Or_error.error_s [%message "no such run" ~run:(Run_key.to_string key : string)])
+      return
+        (Or_error.error_s [%message "no such run" ~run:(Run_key.to_string key : string)])
     | Some (r : Run_record.t) ->
       (match f r with
        | Error _ as e -> return e
@@ -141,7 +147,13 @@ module Make (M : Monad.S) (Store : Store.S with type 'a io := 'a M.t) = struct
   ;;
 
   let approve store ~actor ~now key =
-    transition store ~actor ~now key ~f:(Run_record.approve ~now) ~event:(Run_approved key)
+    transition
+      store
+      ~actor
+      ~now
+      key
+      ~f:(Run_record.approve ~now)
+      ~event:(Run_approved key)
   ;;
 
   let reject store ~actor ~now ~note key =
@@ -155,7 +167,13 @@ module Make (M : Monad.S) (Store : Store.S with type 'a io := 'a M.t) = struct
   ;;
 
   let executed store ~actor ~now key =
-    transition store ~actor ~now key ~f:(Run_record.executed ~now) ~event:(Run_executed key)
+    transition
+      store
+      ~actor
+      ~now
+      key
+      ~f:(Run_record.executed ~now)
+      ~event:(Run_executed key)
   ;;
 
   let failed store ~actor ~now ~reason key =

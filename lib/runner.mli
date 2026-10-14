@@ -1,10 +1,10 @@
-(** Runs rules against a store: claims each rule's run for the current period, fills
-    the snapshot's recent runs from the store, evaluates, records the outcome and audits
-    every step. Also manages rules and moves runs through approval and execution.
+(** Runs rules against a store: claims each rule's run for the current period, fills the
+    snapshot's recent runs from the store, evaluates, records the outcome and audits every
+    step. Also manages rules and moves runs through approval and execution.
 
-    The runner never executes actions. A service reads runs in
-    [Awaiting_execution], carries out their actions with {!Run_key.action_key} as the
-    idempotency key, and reports back with {!Make.executed} or {!Make.failed}.
+    The runner never executes actions. A service reads runs in [Awaiting_execution],
+    carries out their actions with {!Run_key.action_key} as the idempotency key, and
+    reports back with {!Make.executed} or {!Make.failed}.
 
     Daily caps across rules hold when one runner at a time ticks an organisation (the
     runner evaluates rules one by one and re-reads the runs before each); two runners
@@ -41,8 +41,8 @@ module Make (M : Monad.S) (Store : Store.S with type 'a io := 'a M.t) : sig
     -> f:(Rule.t -> Rule.t Or_error.t)
     -> Rule.t Or_error.t M.t
 
-  (** Runs one rule for the period containing [now]. [snapshot]'s [runs] are replaced
-      by the store's runs since the start of the UTC day plus pending ones. *)
+  (** Runs one rule for the period containing [now]. [snapshot]'s [runs] are replaced by
+      the store's runs since the start of the UTC day plus pending ones. *)
   val run_rule
     :  Store.t
     -> Settings.t

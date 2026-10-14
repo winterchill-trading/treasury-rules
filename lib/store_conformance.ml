@@ -7,7 +7,13 @@ module Make (M : Monad.S) (Store : Store.S with type 'a io := 'a M.t) = struct
   open M.Let_syntax
 
   let fail msg sexp = return (Or_error.error_s [%message msg (sexp : Sexp.t)])
-  let ( let*? ) x f = M.bind x ~f:(function Ok v -> f v | Error _ as e -> return e)
+
+  let ( let*? ) x f =
+    M.bind x ~f:(function
+      | Ok v -> f v
+      | Error _ as e -> return e)
+  ;;
+
   let t0 = Time_ns.of_string_with_utc_offset "2030-01-10T12:00:00Z"
   let minutes n = Time_ns.add t0 (Time_ns.Span.of_int_sec (60 * n))
   let stale_after = Time_ns.Span.of_int_sec 120
@@ -80,13 +86,17 @@ module Make (M : Monad.S) (Store : Store.S with type 'a io := 'a M.t) = struct
       | c -> fail "take-over of a stale claim" [%sexp (c : Claim.t)]
     in
     (* The first runner's late write must lose. *)
-    let failed = Run_record.fail first ~reason:"late" ~now:(minutes 6) |> Or_error.ok_exn in
+    let failed =
+      Run_record.fail first ~reason:"late" ~now:(minutes 6) |> Or_error.ok_exn
+    in
     let*? () =
       match%bind Store.update_run store ~expected_version:first.version failed with
       | `Conflict (Some r) when Run_record.equal r taken -> return (Ok ())
       | _ -> fail "a stale version was not refused" [%sexp ()]
     in
-    let settled = Run_record.fail taken ~reason:"done" ~now:(minutes 6) |> Or_error.ok_exn in
+    let settled =
+      Run_record.fail taken ~reason:"done" ~now:(minutes 6) |> Or_error.ok_exn
+    in
     let*? () =
       match%bind Store.update_run store ~expected_version:taken.version settled with
       | `Updated -> return (Ok ())
@@ -104,9 +114,7 @@ module Make (M : Monad.S) (Store : Store.S with type 'a io := 'a M.t) = struct
 
   let listing store =
     let claim name at =
-      match%bind
-        Store.claim_run store (key name at) ~mode:Live ~now:at ~stale_after
-      with
+      match%bind Store.claim_run store (key name at) ~mode:Live ~now:at ~stale_after with
       | Claimed r -> return r
       | c -> raise_s [%message "conformance: claim" (c : Claim.t)]
     in
@@ -126,7 +134,10 @@ module Make (M : Monad.S) (Store : Store.S with type 'a io := 'a M.t) = struct
     let%bind newest = Store.runs_of_rule store recent.key.rule ~limit:1 in
     match newest with
     | [ r ] when Run_key.equal r.key recent.key -> return (Ok ())
-    | l -> fail "runs_of_rule newest first" [%sexp (List.map l ~f:(fun r -> r.Run_record.key) : Run_key.t list)]
+    | l ->
+      fail
+        "runs_of_rule newest first"
+        [%sexp (List.map l ~f:(fun r -> r.Run_record.key) : Run_key.t list)]
   ;;
 
   let audit store =
@@ -137,7 +148,9 @@ module Make (M : Monad.S) (Store : Store.S with type 'a io := 'a M.t) = struct
       ; event = Run_approved (key rule t0)
       }
     in
-    let entries = [ entry 1 "conformance-a"; entry 2 "conformance-b"; entry 3 "conformance-a" ] in
+    let entries =
+      [ entry 1 "conformance-a"; entry 2 "conformance-b"; entry 3 "conformance-a" ]
+    in
     let rec append = function
       | [] -> return ()
       | e :: rest ->

@@ -110,7 +110,8 @@ let to_string_hum t =
   let status s = Sexp.to_string (Run_record.Status.sexp_of_t s) in
   let what =
     match t.event with
-    | Rule_created r -> sprintf "created (%s, %s)" (Rule.Kind.name r.kind) (Mode.to_string r.mode)
+    | Rule_created r ->
+      sprintf "created (%s, %s)" (Rule.Kind.name r.kind) (Mode.to_string r.mode)
     | Rule_updated r -> sprintf "updated to r%d (%s)" r.revision (Mode.to_string r.mode)
     | Rule_status_changed { from; to_; revision } ->
       sprintf
@@ -118,7 +119,8 @@ let to_string_hum t =
         (Sexp.to_string (Rule.Status.sexp_of_t from))
         (Sexp.to_string (Rule.Status.sexp_of_t to_))
         revision
-    | Run_claimed { key = k; attempt } -> sprintf "claimed %s (attempt %d)" (key k) attempt
+    | Run_claimed { key = k; attempt } ->
+      sprintf "claimed %s (attempt %d)" (key k) attempt
     | Run_recorded { key = k; status = s; codes } ->
       sprintf
         "recorded %s: %s [%s]"

@@ -9,13 +9,17 @@ type t =
   }
 
 let create () =
-  { rules = Rule_id.Table.create (); runs = Run_key.Table.create (); audit = Queue.create () }
+  { rules = Rule_id.Table.create ()
+  ; runs = Run_key.Table.create ()
+  ; audit = Queue.create ()
+  }
 ;;
 
 let find_rule t id = Hashtbl.find t.rules id
 
 let rules t =
-  Hashtbl.data t.rules |> List.sort ~compare:(fun (a : Rule.t) b -> Rule_id.compare a.id b.id)
+  Hashtbl.data t.rules
+  |> List.sort ~compare:(fun (a : Rule.t) b -> Rule_id.compare a.id b.id)
 ;;
 
 let save_rule t ~expected_revision (rule : Rule.t) =
