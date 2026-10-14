@@ -59,7 +59,8 @@ module Kind = struct
             ; minimum : Amount.Stable.V1.t
             }
         | Hedge of
-            { staked : Location.Stable.V1.t
+            { asset : Currency.Stable.V1.t
+            ; staked : Location.Stable.V1.t
             ; position : Location.Stable.V1.t
             ; ratio_bps : int
             ; band_bps : int
@@ -105,7 +106,8 @@ module Kind = struct
         ; minimum : Amount.t
         }
     | Hedge of
-        { staked : Location.t
+        { asset : Currency.t
+        ; staked : Location.t
         ; position : Location.t
         ; ratio_bps : int
         ; band_bps : int
@@ -319,8 +321,14 @@ let validate_kind : Kind.t -> unit Or_error.t =
     let%bind () = non_negative "buffer" buffer in
     let%bind () = non_negative "minimum" minimum in
     bps "max_share" ~lo:0 ~hi:10_000 max_share_bps
-  | Hedge { staked; position; ratio_bps; band_bps; max_position; min_notional } ->
+  | Hedge { asset; staked; position; ratio_bps; band_bps; max_position; min_notional } ->
     let%bind () = distinct "hedge" staked position in
+    let%bind () =
+      match max_position with
+      | Some m when not (Currency.equal (Amount.currency m) asset) ->
+        error "hedge max_position is not in the hedged asset" [%sexp (m : Amount.t)]
+      | _ -> Ok ()
+    in
     let%bind () = bps "ratio" ~lo:0 ~hi:10_000 ratio_bps in
     let%bind () = bps "band" ~lo:0 ~hi:10_000 band_bps in
     let%bind () = non_negative "min_notional" min_notional in

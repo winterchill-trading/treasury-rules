@@ -64,11 +64,12 @@ module Kind : sig
         the total, and redeem when cash falls below the buffer or the share is exceeded;
         the fund balance is counted in the cash asset (at its net asset value) *)
     | Hedge of
-        { staked : Location.t (** the long exposure, e.g. staked tokens *)
+        { asset : Currency.t (** the hedged asset, held at [staked] and [position] *)
+        ; staked : Location.t (** the long exposure, e.g. staked tokens *)
         ; position : Location.t (** the hedge; negative is short *)
         ; ratio_bps : int (** target short as a share of [staked] *)
         ; band_bps : int (** tolerated drift, in basis points of the target *)
-        ; max_position : Amount.t option (** largest short allowed *)
+        ; max_position : Amount.t option (** largest short allowed, in [asset] *)
         ; min_notional : Amount.t (** smallest order, in the valuation currency *)
         }
     (** keep a short position at a ratio of a staked or held asset *)
