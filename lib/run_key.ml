@@ -27,7 +27,7 @@ let to_string { rule; period_start } =
     Time_ns.to_string_iso8601_basic period_start ~zone:Time_float.Zone.utc
     |> String.chop_suffix_if_exists ~suffix:".000000000Z"
   in
-  Rule_id.to_string rule ^ ":" ^ at ^ (if String.is_suffix at ~suffix:"Z" then "" else "Z")
+  Rule_id.to_string rule ^ ":" ^ at ^ if String.is_suffix at ~suffix:"Z" then "" else "Z"
 ;;
 
 let action_key t ~index = to_string t ^ ":" ^ Int.to_string index

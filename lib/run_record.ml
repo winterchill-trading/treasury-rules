@@ -166,9 +166,10 @@ let check t =
   else (
     match t.status, t.outcome with
     | Evaluating, Some _ -> bad "evaluating run has an outcome"
-    | (Skipped | Shadowed | Awaiting_approval | Awaiting_execution | Executed | Rejected), None
-      -> bad "settled run has no outcome"
-    | _, Some o when not (Rule_id.equal o.rule t.key.rule) -> bad "outcome for another rule"
+    | ( (Skipped | Shadowed | Awaiting_approval | Awaiting_execution | Executed | Rejected)
+      , None ) -> bad "settled run has no outcome"
+    | _, Some o when not (Rule_id.equal o.rule t.key.rule) ->
+      bad "outcome for another rule"
     | _ -> Ok t)
 ;;
 

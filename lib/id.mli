@@ -9,8 +9,8 @@ module type S = sig
 
   include Identifiable.S with type t := t
 
-  (** Fails on an empty string, one longer than 128 bytes, or one containing whitespace
-      or a character the id kind refuses. *)
+  (** Fails on an empty string, one longer than 128 bytes, or one containing whitespace or
+      a character the id kind refuses. *)
   val create : string -> t Or_error.t
 
   (** Raises on what {!create} rejects. *)

@@ -10,8 +10,8 @@
     + the rule kind proposes actions (or says why not);
     + the rule's daily cap, then the organisation's daily cap, which may reduce or drop
       actions ({!Reason_code.Daily_cap_applied}) or stop the run when used up;
-    + routing: [Review] hits when automatic execution is off or an action's value is
-      above the rule's approval threshold.
+    + routing: [Review] hits when automatic execution is off or an action's value is above
+      the rule's approval threshold.
 
     Caps count the value of today's (UTC) runs in the snapshot that
     {!Run_record.counts_against_caps}; a [Shadow] rule's own cap counts its own shadowed
@@ -20,8 +20,7 @@
 
 open! Core
 
-(** [mode] overrides the rule's mode in the outcome, for a dry-run preview of a live
-    rule. *)
+(** [mode] overrides the rule's mode in the outcome, for a dry-run preview of a live rule. *)
 val evaluate
   :  ?mode:Mode.t
   -> Settings.t
@@ -30,8 +29,8 @@ val evaluate
   -> now:Time_ns.t
   -> Outcome.t
 
-(** The value of today's (UTC) actions that count against caps, per rule. Used by
-    services to show how much of a cap is left. *)
+(** The value of today's (UTC) actions that count against caps, per rule. Used by services
+    to show how much of a cap is left. *)
 val used_today
   :  Settings.t
   -> Snapshot.t

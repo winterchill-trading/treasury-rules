@@ -224,7 +224,6 @@ type t = Repr.t =
 [@@deriving sexp_of, compare, equal]
 
 let error what fields = Or_error.error_s [%message what (fields : Sexp.t)]
-
 let check cond what fields = if cond then Ok () else error what fields
 
 let same_currency what amounts =
@@ -369,8 +368,15 @@ let validate t =
 
 let checked t = Or_error.map (validate t) ~f:(fun () -> t)
 
-let create ~id ~name ~kind ?(guards = Guards.none) ?(cadence = Cadence.daily)
-      ?(mode = Mode.Dry_run) () =
+let create
+  ~id
+  ~name
+  ~kind
+  ?(guards = Guards.none)
+  ?(cadence = Cadence.daily)
+  ?(mode = Mode.Dry_run)
+  ()
+  =
   checked { id; name; kind; guards; cadence; mode; status = Active; revision = 1 }
 ;;
 
@@ -400,7 +406,8 @@ let set_status t ~from status =
   else
     error
       "rule status does not allow this change"
-      [%sexp { id : Rule_id.t = t.id; status : Status.t = t.status; to_ : Status.t = status }]
+      [%sexp
+        { id : Rule_id.t = t.id; status : Status.t = t.status; to_ : Status.t = status }]
 ;;
 
 let pause t = set_status t ~from:Active Paused

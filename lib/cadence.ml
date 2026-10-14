@@ -50,9 +50,13 @@ let period_start t now =
 let next_period_start t now = Time_ns.add (period_start t now) t
 
 let quickcheck_generator =
-  Quickcheck.Generator.map (Int.gen_incl 1 (31 * 24 * 60)) ~f:(fun minutes ->
-    Time_ns.Span.of_int_sec (minutes * 60))
+  Quickcheck.Generator.map
+    (Int.gen_incl 1 (31 * 24 * 60))
+    ~f:(fun minutes -> Time_ns.Span.of_int_sec (minutes * 60))
 ;;
 
-let quickcheck_observer = Quickcheck.Observer.unmap Int.quickcheck_observer ~f:Time_ns.Span.to_int_ns
+let quickcheck_observer =
+  Quickcheck.Observer.unmap Int.quickcheck_observer ~f:Time_ns.Span.to_int_ns
+;;
+
 let quickcheck_shrinker = Quickcheck.Shrinker.empty ()

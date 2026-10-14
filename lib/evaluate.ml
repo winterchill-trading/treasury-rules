@@ -105,7 +105,10 @@ let sweep ctx ~from ~to_ ~threshold ~minimum =
           ~value
           ~minimum
       ]
-    , [ Hit.action Sweep_excess "excess above the threshold" (ev @ [ "excess", amt excess ])
+    , [ Hit.action
+          Sweep_excess
+          "excess above the threshold"
+          (ev @ [ "excess", amt excess ])
       ] )
 ;;
 
@@ -125,12 +128,19 @@ let top_up ctx ~from ~to_ ~floor ~target ~minimum =
        || (Amount.( < ) amount minimum && Amount.( < ) available need)
     then Error (block Insufficient_balance "the source cannot fund the top-up" ev)
     else if Amount.( < ) amount minimum
-    then Error (block Below_minimum "top-up below the minimum" (ev @ [ "minimum", amt minimum ]))
+    then
+      Error
+        (block Below_minimum "top-up below the minimum" (ev @ [ "minimum", amt minimum ]))
     else
       let+ value = value ctx amount in
-      ( [ action ~kind:(Transfer { from; to_; amount }) ~reason:Top_up_floor ~value ~minimum ]
-      , [ Hit.action Top_up_floor "balance below the floor" (ev @ [ "amount", amt amount ]) ]
-      ))
+      ( [ action
+            ~kind:(Transfer { from; to_; amount })
+            ~reason:Top_up_floor
+            ~value
+            ~minimum
+        ]
+      , [ Hit.action Top_up_floor "balance below the floor" (ev @ [ "amount", amt amount ])
+        ] ))
 ;;
 
 let convert ctx ~from ~to_ ~threshold ~buy ~minimum ~max_per_run =
@@ -144,11 +154,15 @@ let convert ctx ~from ~to_ ~threshold ~buy ~minimum ~max_per_run =
     let sell = Option.value_map max_per_run ~default:excess ~f:(min_a excess) in
     let ev = ev @ [ "sell", amt sell ] in
     if Amount.( < ) sell minimum
-    then Error (block Below_minimum "excess below the minimum" (ev @ [ "minimum", amt minimum ]))
+    then
+      Error
+        (block Below_minimum "excess below the minimum" (ev @ [ "minimum", amt minimum ]))
     else
       let* r = rate ctx ~base:c ~quote:buy in
       let buy_estimate = Rate.convert ~rounding:Down r sell |> Or_error.ok_exn in
-      let ev = ev @ [ "rate", Rate.price_to_string (Rate.price r); "buy", amt buy_estimate ] in
+      let ev =
+        ev @ [ "rate", Rate.price_to_string (Rate.price r); "buy", amt buy_estimate ]
+      in
       if not (Amount.is_positive buy_estimate)
       then Error (block Below_minimum "the conversion would buy nothing" ev)
       else
@@ -183,7 +197,8 @@ let rebalance ctx ~(targets : Rule.Target.t list) ~band_bps ~minimum =
   then Error (block Below_threshold "nothing to rebalance" [ "total", amt total ])
   else (
     let drift ((t : Rule.Target.t), value) =
-      Q.sub (Q.mul (Q.div (Amount.to_q value) (Amount.to_q total)) (Q.of_int 10_000))
+      Q.sub
+        (Q.mul (Q.div (Amount.to_q value) (Amount.to_q total)) (Q.of_int 10_000))
         (Q.of_int t.weight_bps)
     in
     let leg_name (t : Rule.Target.t) = loc t.location ^ " " ^ cur t.asset in
@@ -214,7 +229,7 @@ let rebalance ctx ~(targets : Rule.Target.t list) ~band_bps ~minimum =
       let move (o : Rule.Target.t) (u : Rule.Target.t) m =
         let* amount = in_asset ctx m o.asset ~rounding:Down in
         let* min_o = in_asset ctx minimum o.asset ~rounding:Up in
-        let+ kind : Action.Kind.t =
+        let+ (kind : Action.Kind.t) =
           if Currency.equal o.asset u.asset
           then Ok (Action.Kind.Transfer { from = o.location; to_ = u.location; amount })
           else
@@ -234,7 +249,9 @@ let rebalance ctx ~(targets : Rule.Target.t list) ~band_bps ~minimum =
         | (o, s) :: os, (u, d) :: us ->
           let m = min_a s d in
           let acc =
-            if Amount.is_positive m && Amount.( >= ) m minimum then move o u m :: acc else acc
+            if Amount.is_positive m && Amount.( >= ) m minimum
+            then move o u m :: acc
+            else acc
           in
           let s' = Amount.sub_exn s m
           and d' = Amount.sub_exn d m in
@@ -258,11 +275,7 @@ let yield_ ctx ~cash ~fund ~buffer ~max_share_bps ~minimum =
   let total = Amount.add_exn cash_b fund_b in
   let limit = Amount.mul_ratio ~rounding:Down total (bps_of_int max_share_bps) in
   let ev =
-    [ "cash", amt cash_b
-    ; "fund", amt fund_b
-    ; "buffer", amt buffer
-    ; "limit", amt limit
-    ]
+    [ "cash", amt cash_b; "fund", amt fund_b; "buffer", amt buffer; "limit", amt limit ]
   in
   let propose kind reason detail amount =
     if Amount.( < ) amount minimum
@@ -304,7 +317,11 @@ let yield_ ctx ~cash ~fund ~buffer ~max_share_bps ~minimum =
     then Error (block Below_buffer "no cash above the buffer" ev)
     else (
       let s = min_a idle room in
-      propose (Subscribe { from = cash; fund; amount = s }) Yield_subscribe "cash above the buffer" s))
+      propose
+        (Subscribe { from = cash; fund; amount = s })
+        Yield_subscribe
+        "cash above the buffer"
+        s))
 ;;
 
 let hedge ctx ~asset ~staked ~position ~ratio_bps ~band_bps ~max_position ~min_notional =
@@ -312,7 +329,9 @@ let hedge ctx ~asset ~staked ~position ~ratio_bps ~band_bps ~max_position ~min_n
   let* s = balance ctx staked asset in
   let* p = balance ctx position asset in
   let long = max_a s (Amount.zero asset) in
-  let unclamped = Amount.neg (Amount.mul_ratio ~rounding:Down long (bps_of_int ratio_bps)) in
+  let unclamped =
+    Amount.neg (Amount.mul_ratio ~rounding:Down long (bps_of_int ratio_bps))
+  in
   let target, clamped =
     match max_position with
     | Some m when Amount.( < ) unclamped (Amount.neg m) -> Amount.neg m, true
@@ -337,7 +356,9 @@ let hedge ctx ~asset ~staked ~position ~ratio_bps ~band_bps ~max_position ~min_n
     let* r = rate ctx ~base:asset ~quote:ctx.settings.valuation in
     let size = Amount.abs drift in
     let notional = Rate.convert ~rounding:Down r size |> Or_error.ok_exn in
-    let ev = ev @ [ "price", Rate.price_to_string (Rate.price r); "notional", amt notional ] in
+    let ev =
+      ev @ [ "price", Rate.price_to_string (Rate.price r); "notional", amt notional ]
+    in
     if Amount.( < ) notional min_notional
     then
       Error
@@ -522,8 +543,7 @@ let caps ctx actions =
         | Live -> used_today settings snapshot ~now ~rule:(Some rule.id)
         | Shadow | Dry_run ->
           sum_today settings snapshot ~now ~f:(fun r ->
-            Rule_id.equal r.key.rule rule.id
-            && Run_record.Status.equal r.status Shadowed)
+            Rule_id.equal r.key.rule rule.id && Run_record.Status.equal r.status Shadowed)
       in
       apply_cap ~code:Rule_daily_cap_reached ~cap ~used actions
   in

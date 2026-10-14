@@ -1,6 +1,6 @@
-(** What a rule sees: balances per location and asset, current prices, a price history
-    for drawdown guards, and recent runs for caps and pending checks. A service builds it
-    from its ledger, price feeds and {!Store}; the evaluation never reads anything else. *)
+(** What a rule sees: balances per location and asset, current prices, a price history for
+    drawdown guards, and recent runs for caps and pending checks. A service builds it from
+    its ledger, price feeds and {!Store}; the evaluation never reads anything else. *)
 
 open! Core
 open Money
@@ -19,8 +19,8 @@ type t =
   ; prices : Rate.t list (** latest observations; the newest per pair wins *)
   ; price_history : Rate.t list (** older observations, for drawdown guards *)
   ; runs : Run_record.t list
-  (** runs of every rule since at least the start of the UTC day, and any older run
-      still pending *)
+  (** runs of every rule since at least the start of the UTC day, and any older run still
+      pending *)
   }
 [@@deriving sexp, compare, equal]
 
@@ -37,10 +37,10 @@ val create
     Several rows add up. *)
 val balance : t -> Location.t -> Currency.t -> Amount.t option
 
-(** A rate from [base] to [quote] observed at or after [now - max_age]: the newest
-    direct quote, else the inverse of the newest reverse quote, else a cross through
-    [via] (the older of the two legs' times). [None] when [base] equals [quote] or
-    nothing fresh is known. *)
+(** A rate from [base] to [quote] observed at or after [now - max_age]: the newest direct
+    quote, else the inverse of the newest reverse quote, else a cross through [via] (the
+    older of the two legs' times). [None] when [base] equals [quote] or nothing fresh is
+    known. *)
 val rate
   :  t
   -> base:Currency.t

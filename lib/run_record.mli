@@ -30,8 +30,7 @@ module Status : sig
     | Rejected (** an approver refused the actions *)
   [@@deriving sexp, compare, equal, enumerate]
 
-  (** No transition leaves it: [Skipped], [Shadowed], [Executed], [Failed],
-      [Rejected]. *)
+  (** No transition leaves it: [Skipped], [Shadowed], [Executed], [Failed], [Rejected]. *)
   val is_final : t -> bool
 end
 
@@ -57,9 +56,9 @@ val is_stale : t -> now:Time_ns.t -> stale_after:Time_ns.Span.t -> bool
 (** A stale claim taken over: attempt + 1. Fails unless [Evaluating]. *)
 val take_over : t -> now:Time_ns.t -> t Or_error.t
 
-(** Settles the evaluation. A [Shadow] run goes to [Shadowed] unless skipped; a [Live]
-    run goes to [Skipped], [Awaiting_approval] or [Awaiting_execution] by the outcome's
-    route. Fails unless [Evaluating], or when the outcome is for another rule. *)
+(** Settles the evaluation. A [Shadow] run goes to [Shadowed] unless skipped; a [Live] run
+    goes to [Skipped], [Awaiting_approval] or [Awaiting_execution] by the outcome's route.
+    Fails unless [Evaluating], or when the outcome is for another rule. *)
 val record : t -> Outcome.t -> now:Time_ns.t -> t Or_error.t
 
 val approve : t -> now:Time_ns.t -> t Or_error.t

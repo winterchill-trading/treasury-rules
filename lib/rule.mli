@@ -1,5 +1,5 @@
-(** A treasury rule: what it watches, what it proposes, the guards around it, how often
-    it runs and in which mode.
+(** A treasury rule: what it watches, what it proposes, the guards around it, how often it
+    runs and in which mode.
 
     Amounts in a rule are in the currency of the balance they describe (a sweep's
     threshold is in the swept asset). Amounts compared across assets (a rebalance's
@@ -27,16 +27,14 @@ module Kind : sig
         ; to_ : Location.t
         ; threshold : Amount.t (** keep this much at [from] *)
         ; minimum : Amount.t
-        }
-    (** move everything above [threshold] from [from] to [to_] *)
+        } (** move everything above [threshold] from [from] to [to_] *)
     | Top_up of
         { from : Location.t
         ; to_ : Location.t
         ; floor : Amount.t (** act when [to_] holds less than this *)
         ; target : Amount.t (** refill [to_] up to this *)
         ; minimum : Amount.t
-        }
-    (** keep a balance (a card float, a payroll runway) at or above a floor *)
+        } (** keep a balance (a card float, a payroll runway) at or above a floor *)
     | Convert of
         { from : Location.t
         ; to_ : Location.t
@@ -44,8 +42,7 @@ module Kind : sig
         ; buy : Currency.t
         ; minimum : Amount.t (** in the sold asset *)
         ; max_per_run : Amount.t option (** in the sold asset *)
-        }
-    (** convert everything above [threshold] into [buy] *)
+        } (** convert everything above [threshold] into [buy] *)
     | Rebalance of
         { targets : Target.t list
         ; band_bps : int (** tolerated drift of any leg, in basis points of the total *)
@@ -60,9 +57,9 @@ module Kind : sig
         ; max_share_bps : int (** the fund's maximum share of cash + fund *)
         ; minimum : Amount.t
         }
-    (** place cash above the buffer in a yield or staking position, up to a share of
-        the total, and redeem when cash falls below the buffer or the share is exceeded;
-        the fund balance is counted in the cash asset (at its net asset value) *)
+    (** place cash above the buffer in a yield or staking position, up to a share of the
+        total, and redeem when cash falls below the buffer or the share is exceeded; the
+        fund balance is counted in the cash asset (at its net asset value) *)
     | Hedge of
         { asset : Currency.t (** the hedged asset, held at [staked] and [position] *)
         ; staked : Location.t (** the long exposure, e.g. staked tokens *)
@@ -71,8 +68,7 @@ module Kind : sig
         ; band_bps : int (** tolerated drift, in basis points of the target *)
         ; max_position : Amount.t option (** largest short allowed, in [asset] *)
         ; min_notional : Amount.t (** smallest order, in the valuation currency *)
-        }
-    (** keep a short position at a ratio of a staked or held asset *)
+        } (** keep a short position at a ratio of a staked or held asset *)
   [@@deriving sexp, compare, equal]
 
   (** ["sweep"], ["top_up"], ["convert"], ["rebalance"], ["yield"], ["hedge"]. *)

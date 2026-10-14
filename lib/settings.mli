@@ -9,13 +9,11 @@ type t =
   ; org_daily_cap : Amount.t option
   (** most value all live rules together may move per UTC day *)
   ; auto_execute : bool
-  (** [false] sends every live proposal to approval
-      ({!Reason_code.Manual_execution}) *)
+  (** [false] sends every live proposal to approval ({!Reason_code.Manual_execution}) *)
   ; max_price_age : Time_ns.Span.t (** older prices count as unavailable *)
   ; max_snapshot_age : Time_ns.Span.t (** older balances make every rule skip *)
   ; stale_claim_after : Time_ns.Span.t
-  (** a run still evaluating after this long belongs to a crashed runner and is taken
-      over *)
+  (** a run still evaluating after this long belongs to a crashed runner and is taken over *)
   }
 [@@deriving sexp, compare, equal]
 

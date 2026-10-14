@@ -83,7 +83,11 @@ let to_string_hum t =
     | Skip -> "skip"
   in
   let head =
-    sprintf "%s r%d (%s): %s" (Rule_id.to_string t.rule) t.revision (Mode.to_string t.mode)
+    sprintf
+      "%s r%d (%s): %s"
+      (Rule_id.to_string t.rule)
+      t.revision
+      (Mode.to_string t.mode)
       route
   in
   let actions = List.map t.actions ~f:(fun a -> "  " ^ Action.to_string_hum a) in

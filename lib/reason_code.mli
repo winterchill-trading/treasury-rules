@@ -100,6 +100,6 @@ val builtin : t list
 (** One line for operators: what the code means. *)
 val description : t -> string
 
-(** The same code as a risk-rules code ([Custom "TREASURY_<code>"]), so treasury
-    outcomes can share audit and review tooling with risk decisions. *)
+(** The same code as a risk-rules code ([Custom "TREASURY_<code>"]), so treasury outcomes
+    can share audit and review tooling with risk decisions. *)
 val to_risk_rules : t -> Risk_rules.Reason_code.t

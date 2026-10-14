@@ -47,10 +47,14 @@ let create ~at ?(balances = []) ?(prices = []) ?(price_history = []) ?(runs = []
 
 let balance t location currency =
   List.filter t.balances ~f:(fun (b : Balance.t) ->
-    Location.equal b.location location && Currency.equal (Amount.currency b.amount) currency)
+    Location.equal b.location location
+    && Currency.equal (Amount.currency b.amount) currency)
   |> function
   | [] -> None
-  | rows -> Some (Amount.sum currency (List.map rows ~f:(fun (b : Balance.t) -> b.amount)) |> Or_error.ok_exn)
+  | rows ->
+    Some
+      (Amount.sum currency (List.map rows ~f:(fun (b : Balance.t) -> b.amount))
+       |> Or_error.ok_exn)
 ;;
 
 let newest t ~base ~quote ~now ~max_age =
@@ -65,8 +69,7 @@ let newest t ~base ~quote ~now ~max_age =
 let direct t ~base ~quote ~now ~max_age =
   match newest t ~base ~quote ~now ~max_age with
   | Some r -> Some r
-  | None ->
-    Option.map (newest t ~base:quote ~quote:base ~now ~max_age) ~f:Rate.inverse
+  | None -> Option.map (newest t ~base:quote ~quote:base ~now ~max_age) ~f:Rate.inverse
 ;;
 
 let rate t ~base ~quote ~via ~now ~max_age =

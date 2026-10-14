@@ -1,5 +1,5 @@
-(** The result of evaluating one rule against one snapshot: the proposed actions and
-    every finding, with the route derived from them.
+(** The result of evaluating one rule against one snapshot: the proposed actions and every
+    finding, with the route derived from them.
 
     The route is the worst finding, as in risk-rules' [Decision]: any [Block] hit, or no
     action at all, means [Skip]; otherwise any [Review] hit means [Approve]; otherwise
@@ -42,8 +42,8 @@ val severity : t -> Risk_rules.Severity.t
 (** The reason codes of the [Block] hits, in order (empty unless skipped). *)
 val skip_reasons : t -> Reason_code.t list
 
-(** The outcome as a risk-rules decision for [rule], for shared audit and review
-    tooling. A skipped run with no hits gets none. *)
+(** The outcome as a risk-rules decision for [rule], for shared audit and review tooling.
+    A skipped run with no hits gets none. *)
 val to_decision : t -> rule:string -> Risk_rules.Decision.t
 
 (** Several lines for logs and operator screens. *)

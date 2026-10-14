@@ -115,9 +115,7 @@ let scale t ratio =
     | Hedge r -> Hedge { r with size = shrink r.size }
     | Convert r ->
       let sell = shrink r.sell in
-      let buy_estimate =
-        Rate.convert ~rounding:down r.rate sell |> Or_error.ok_exn
-      in
+      let buy_estimate = Rate.convert ~rounding:down r.rate sell |> Or_error.ok_exn in
       Convert { r with sell; buy_estimate }
   in
   let t' = { t with kind; value = shrink t.value } in
