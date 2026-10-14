@@ -1,0 +1,5 @@
+sweep-spot r1 (live): execute
+  transfer 30000.000000 USDC exchange:spot -> custody:cold
+  [allow] SWEEP_EXCESS: excess above the threshold
+recorded sweep-spot:2026-10-14T10:00:00Z
+already recorded sweep-spot:2026-10-14T10:00:00Z
